@@ -277,6 +277,11 @@ function calculateAge(){
     <p>or ${totalSeconds.toLocaleString()} seconds</p>
     <p><b>Next birthday in: ${daysToB} days 🎂</b></p>
   `;
+    // ✅ Calculate ke baad calendars auto show
+  const wrap = document.querySelector(".cal-wrap");
+  wrap.style.display = "flex";
+  drawCalendar(+bYear.value, +bMonth.value, +bDay.value, "calBirth", "birth");
+  drawCalendar(+tYear.value, +tMonth.value, +tDay.value, "calTarget", "target");
 }
 
 function giveFeedback(type){
