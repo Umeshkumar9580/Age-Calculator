@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Age Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg:#ffffff;
+  --text:#000;
+  --panel:#f2f2f2;
+  --primary:#5a8f29;
+  --result:#e3edda;
+}
+body.dark{
+  --bg:#121212;
+  --text:#eee;
+  --panel:#1e1e1e;
+  --primary:#4caf50;
+  --result:#1f2a1f;
+}
+body{
+  margin:0;
+  padding:20px;
+  font-family:Arial, Helvetica, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:.3s;
+}
+.container{max-width:900px;margin:auto;}
+h1{color:#003366;}
+.topbar{display:flex;justify-content:space-between;align-items:center;}
+.toggle{cursor:pointer;padding:6px 12px;border:1px solid #ccc;border-radius:4px;}
+
+.result-header{background:var(--primary);color:#fff;padding:8px 12px;font-weight:bold;}
+.result-box{border:1px solid #ccc;padding:15px;background:var(--result);}
+.inputs-box{border:1px solid #ccc;background:var(--panel);padding:20px;margin-top:15px;}
+
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px;}
+label{min-width:150px;font-weight:bold;}
+
+select,input[type="number"]{
+  padding:6px;font-size:16px;border:1px solid #336699;border-radius:3px;
+}
+button{
+  background:var(--primary);color:#fff;border:none;padding:10px 18px;
+  font-size:16px;cursor:pointer;border-radius:4px;
+}
+button:hover{opacity:.9;}
+
+.calendar-btn{cursor:pointer;font-size:20px;padding:4px 8px;border:1px solid #ccc;border-radius:4px;background:#fff;}
+
+.output p{margin:6px 0;font-size:18px;}
+.big{font-size:22px;font-weight:bold;}
+
+/* Calendar */
+.cal-wrap{display:none;gap:20px;flex-wrap:wrap;margin-top:15px;}
+.cal{border:1px solid #ccc;padding:8px;}
+.cal h3{text-align:center;margin:4px 0;}
+.cal table{border-collapse:collapse;}
+.cal th,.cal td{border:1px solid #ccc;width:30px;height:26px;text-align:center;cursor:pointer;}
+.cal .selected{background:#5a8f29;color:#fff;}
+
+@media(max-width:600px){
+  label{min-width:100%;}
+}
+
+/* Footer */
+.footer{
+  margin-top:30px;
+  padding:20px;
+  text-align:center;
+  border-top:1px solid #ccc;
+  background: var(--panel);
+}
+.footer p{margin:6px 0;}
+.footer a{color:#3366cc;text-decoration:none;}
+.footer a:hover{text-decoration:underline;}
+.feedback span{
+  font-size:28px;margin:0 10px;cursor:pointer;transition: transform 0.1s;
+}
+.feedback span:hover{transform: scale(1.2);}
+#feedbackMsg{margin-top:10px;font-weight:bold;color: var(--primary);}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="topbar">
+    <h1>Age Calculator</h1>
+    <div class="toggle" onclick="toggleMode()">🌙 / 🌞</div>
+  </div>
+
+  <div class="result-header">Result</div>
+  <div class="result-box">
+    <div class="output" id="output">
+      <p class="big">Modify the values and click Calculate</p>
+    </div>
+  </div>
+
+  <div class="inputs-box">
+    <div class="row">
+      <label>Date of Birth</label>
+      <select id="bMonth"></select>
+      <select id="bDay"></select>
+      <input type="number" id="bYear" placeholder="Year" style="width:90px;">
+      <span class="calendar-btn" onclick="showCal('birth')">📅</span>
+    </div>
+
+    <div class="row">
+      <label>Age at the Date of</label>
+      <select id="tMonth"></select>
+      <select id="tDay"></select>
+      <input type="number" id="tYear" placeholder="Year" style="width:90px;">
+      <span class="calendar-btn" onclick="showCal('target')">📅</span>
+    </div>
+
+    <div class="row">
+      <button onclick="calculateAge()">Calculate ▶️</button>
+      <button onclick="setToday()">Till Today</button>
+    </div>
+
+    <div class="cal-wrap">
+      <div class="cal" id="calBirth"></div>
+      <div class="cal" id="calTarget"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function fillSelectors(){
+  months.forEach((m,i)=>{
+    bMonth.add(new Option(m,i));
+    tMonth.add(new Option(m,i));
+  });
+  for(let d=1;d<=31;d++){
+    bDay.add(new Option(d,d));
+    tDay.add(new Option(d,d));
+  }
+}
+fillSelectors();
+
+// load saved
+window.onload=()=>{
+  const sd=localStorage.getItem("dob");
+  const st=localStorage.getItem("target");
+  if(sd){
+    const d=new Date(sd);
+    bMonth.value=d.getMonth(); bDay.value=d.getDate(); bYear.value=d.getFullYear();
+  }
+  if(st){
+    const d=new Date(st);
+    tMonth.value=d.getMonth(); tDay.value=d.getDate(); tYear.value=d.getFullYear();
+  }
+  const mode=localStorage.getItem("mode");
+  if(mode==="dark") document.body.classList.add("dark");
+};
+
+function toggleMode(){
+  document.body.classList.toggle("dark");
+  localStorage.setItem("mode", document.body.classList.contains("dark")?"dark":"light");
+}
+
+function setToday(){
+  const d=new Date();
+  tMonth.value=d.getMonth();
+  tDay.value=d.getDate();
+  tYear.value=d.getFullYear();
+}
+
+function daysInMonth(y,m){
+  return new Date(y,m+1,0).getDate();
+}
+
+/* Draw calendar with clickable days */
+function drawCalendar(y,m,selDay,boxId,mode){
+  const box=document.getElementById(boxId);
+  if(!y || isNaN(y)) { box.innerHTML=""; return; }
+
+  const first=new Date(y,m,1).getDay();
+  const dim=new Date(y,m+1,0).getDate();
+
+  let html=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <button onclick="changeMonth('${mode}',-1)">◀</button>
+      <strong>${months[m]} ${y}</strong>
+      <button onclick="changeMonth('${mode}',1)">▶</button>
+    </div>
+    <table><tr>
+  `;
+  const wd=["S","M","T","W","T","F","S"];
+  wd.forEach(w=>html+=`<th>${w}</th>`);
+  html+="</tr><tr>";
+
+  let cell=0;
+  for(let i=0;i<first;i++){html+="<td></td>"; cell++;}
+
+  for(let d=1;d<=dim;d++){
+    const cls = d==selDay ? "selected" : "";
+    html+=`<td class="${cls}" onclick="pickFromCalendar(${d},${m},${y},'${mode}')">${d}</td>`;
+    cell++;
+    if(cell%7==0) html+="</tr><tr>";
+  }
+  html+="</tr></table>";
+  box.innerHTML=html;
+}
+
+/* Toggle calendar */
+function showCal(type){
+  const wrap = document.querySelector(".cal-wrap");
+  wrap.style.display = "flex"; // hamesha show
+
+  if(type==="birth"){
+    drawCalendar(+bYear.value, +bMonth.value, +bDay.value, "calBirth", "birth");
+  } else {
+    drawCalendar(+tYear.value, +tMonth.value, +tDay.value, "calTarget", "target");
+  }
+}
+
+/* Pick date from calendar */
+function pickFromCalendar(d,m,y,mode){
+  if(mode === "birth"){
+    bDay.value = d;
+    bMonth.value = m;
+    bYear.value = y;
+    drawCalendar(y,m,d,"calBirth","birth");
+  } else {
+    tDay.value = d;
+    tMonth.value = m;
+    tYear.value = y;
+    drawCalendar(y,m,d,"calTarget","target");
+  }
+  // ❌ Yahan calendar hide nahi hoga
+  // Result bhi auto-update nahi hoga
+}
+
+function calculateAge(){
+  const by=+bYear.value, bm=+bMonth.value, bd=+bDay.value;
+  const ty=+tYear.value, tm=+tMonth.value, td=+tDay.value;
+  if(!by||!ty){ alert("Enter years properly"); return; }
+
+  const dob=new Date(by,bm,bd);
+  const target=new Date(ty,tm,td);
+  if(target<dob){ alert("Target date must be after birth date"); return; }
+
+  localStorage.setItem("dob", dob.toISOString());
+  localStorage.setItem("target", target.toISOString());
+
+  let years=ty-by, months=tm-bm, days=td-bd;
+  if(days<0){ months--; days+=daysInMonth(ty,tm-1<0?11:tm-1); }
+  if(months<0){ years--; months+=12; }
+
+  const msPerDay=86400000;
+  const totalDays=Math.floor((target-dob)/msPerDay);
+  const totalWeeks=Math.floor(totalDays/7);
+  const extraDays=totalDays%7;
+  const totalMonths=years*12+months;
+  const totalHours=totalDays*24;
+  const totalMinutes=totalHours*60;
+  const totalSeconds=totalMinutes*60;
+
+  let nextB=new Date(ty,bm,bd);
+  if(nextB<=target) nextB.setFullYear(nextB.getFullYear()+1);
+  const daysToB=Math.ceil((nextB-target)/msPerDay);
+
+  output.innerHTML=`
+    <p class="big">Age:</p>
+    <p class="big">${years} years ${months} months ${days} days</p>
+    <p>or ${totalMonths} months ${days} days</p>
+    <p>or ${totalWeeks} weeks ${extraDays} days</p>
+    <p>or ${totalDays.toLocaleString()} days</p>
+    <p>or ${totalHours.toLocaleString()} hours</p>
+    <p>or ${totalMinutes.toLocaleString()} minutes</p>
+    <p>or ${totalSeconds.toLocaleString()} seconds</p>
+    <p><b>Next birthday in: ${daysToB} days 🎂</b></p>
+  `;
+}
+
+function giveFeedback(type){
+  let msg = "";
+  if(type === "love") msg = "❤️ Thanks! You loved it!";
+  if(type === "like") msg = "👍 Thanks for your like!";
+  if(type === "dislike") msg = "👎 Thanks for your feedback!";
+  if(type === "star") msg = "⭐ Glad you found it awesome!";
+  document.getElementById("feedbackMsg").innerText = msg;
+}
+function changeMonth(mode,delta){
+  if(mode==="birth"){
+    let m=+bMonth.value + delta;
+    let y=+bYear.value;
+    if(m<0){ m=11; y--; }
+    if(m>11){ m=0; y++; }
+    bMonth.value=m; bYear.value=y;
+    drawCalendar(y,m,+bDay.value,"calBirth","birth");
+  } else {
+    let m=+tMonth.value + delta;
+    let y=+tYear.value;
+    if(m<0){ m=11; y--; }
+    if(m>11){ m=0; y++; }
+    tMonth.value=m; tYear.value=y;
+    drawCalendar(y,m,+tDay.value,"calTarget","target");
+  }
+}
+</script>
+
+<!-- Footer -->
+<div class="footer">
+  <p>🙏 Thankyou for visiting</p>
+  <p><b>By Umesh Kushwaha</b></p>
+  <p>📧 Contact me: <a href="mailto:umeshkumark163@gmail.com">umeshkumark163@gmail.com</a></p>
+
+  <div class="feedback">
+    <span onclick="giveFeedback('love')" title="Love it">❤️</span>
+    <span onclick="giveFeedback('like')" title="Like">👍</span>
+    <span onclick="giveFeedback('dislike')" title="Dislike">👎</span>
+    <span onclick="giveFeedback('star')" title="Awesome">⭐</span>
+  </div>
+
+  <p id="feedbackMsg"></p>
+</div>
+
+</body>
+</html>
