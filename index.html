@@ -84,6 +84,29 @@ button:hover{opacity:.9;}
 }
 .feedback span:hover{transform: scale(1.2);}
 #feedbackMsg{margin-top:10px;font-weight:bold;color: var(--primary);}
+
+/* Make info section look like normal page content */
+.info-section{
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 0;          /* no extra padding */
+  background: transparent; /* no box background */
+  border: none;        /* remove border */
+}
+
+/* Make footer also blend with page */
+.footer{
+  background: transparent;
+  border-top: 1px solid #ccc;  /* optional, thin line only */
+}
+  /* Improve spacing and readability for info section */
+.info-section h2 {
+  margin-top: 10px;
+}
+
+.info-section p {
+  line-height: 1.6;
+}
 </style>
 </head>
 <body>
@@ -312,6 +335,27 @@ function changeMonth(mode,delta){
   }
 }
 </script>
+<div class="info-section">
+  <h2>How Age Is Calculated</h2>
+  <p>
+    Different cultures calculate age in different ways. This age calculator follows the most commonly used system.
+    In this system, a person’s age increases on their birthday. For example, if someone has lived for 3 years and
+    11 months, their age is counted as 3, and it becomes 4 on their next birthday.
+  </p>
+
+  <p>
+    In some cultures, age can be counted in other ways. In certain traditional systems, a person may be considered
+    one year old at birth, and their age increases at the beginning of the new year instead of on their birthday.
+    Because of these differences, age can be expressed differently depending on culture and tradition.
+  </p>
+
+  <p>
+    Sometimes, the result in months and days can be confusing, especially when dates are near the end of a month.
+    This happens because different months have different numbers of days. This calculator uses a simple and consistent
+    method to calculate the difference between two dates, so the result stays easy to understand and useful for
+    everyday calculations.
+  </p>
+</div>
 
 <!-- Footer -->
 <div class="footer">
