@@ -2,380 +2,1088 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title> Online Age Calculator 2026 | Calculate Exact Age</title>
+<title>Age Calculator 3D | Umesh Kushwaha</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Free online Age Calculator 2026 by Umesh Kushwaha. Calculate your exact age in years, months, days, hours, minutes and seconds with this birthday age calculator.">
-<meta name="keywords" content="age calculator, online age calculator, birthday age calculator, exact age calculator, calculate age online">
+<meta name="description" content="Free online Age Calculator 2026 by Umesh Kushwaha. Calculate your exact age in years, months, days, hours, minutes and seconds.">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <style>
-:root{
-  --bg:#ffffff;
-  --text:#000;
-  --panel:#f2f2f2;
-  --primary:#5a8f29;
-  --result:#e3edda;
-}
-body.dark{
-  --bg:#121212;
-  --text:#eee;
-  --panel:#1e1e1e;
-  --primary:#4caf50;
-  --result:#1f2a1f;
-}
-body{
-  margin:0;
-  padding:20px;
-  font-family:Arial, Helvetica, sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  transition:.3s;
-}
-.container{max-width:900px;margin:auto;}
-h1{color:#003366;}
-.topbar{display:flex;justify-content:space-between;align-items:center;}
-.toggle{cursor:pointer;padding:6px 12px;border:1px solid #ccc;border-radius:4px;}
-
-.result-header{background:var(--primary);color:#fff;padding:8px 12px;font-weight:bold;}
-.result-box{border:1px solid #ccc;padding:15px;background:var(--result);}
-.inputs-box{border:1px solid #ccc;background:var(--panel);padding:20px;margin-top:15px;}
-
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px;}
-label{min-width:150px;font-weight:bold;}
-
-select,input[type="number"]{
-  padding:6px;font-size:16px;border:1px solid #336699;border-radius:3px;
-}
-button{
-  background:var(--primary);color:#fff;border:none;padding:10px 18px;
-  font-size:16px;cursor:pointer;border-radius:4px;
-}
-button:hover{opacity:.9;}
-
-.calendar-btn{cursor:pointer;font-size:20px;padding:4px 8px;border:1px solid #ccc;border-radius:4px;background:#fff;}
-
-.output p{margin:6px 0;font-size:18px;}
-.big{font-size:22px;font-weight:bold;}
-
-/* Calendar */
-.cal-wrap{display:none;gap:20px;flex-wrap:wrap;margin-top:15px;}
-.cal{border:1px solid #ccc;padding:8px;}
-.cal h3{text-align:center;margin:4px 0;}
-.cal table{border-collapse:collapse;}
-.cal th,.cal td{border:1px solid #ccc;width:30px;height:26px;text-align:center;cursor:pointer;}
-.cal .selected{background:#5a8f29;color:#fff;}
-
-@media(max-width:600px){
-  label{min-width:100%;}
+:root {
+  --neon1: #ff00ff;
+  --neon2: #00ffff;
+  --neon3: #ffff00;
+  --neon4: #ff6600;
+  --neon5: #00ff88;
+  --glass: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.15);
+  --dark: #050510;
 }
 
-/* Footer */
-.footer{
-  margin-top:30px;
-  padding:20px;
-  text-align:center;
-  border-top:1px solid #ccc;
-  background: var(--panel);
-}
-.footer p{margin:6px 0;}
-.footer a{color:#3366cc;text-decoration:none;}
-.footer a:hover{text-decoration:underline;}
-.feedback span{
-  font-size:28px;margin:0 10px;cursor:pointer;transition: transform 0.1s;
-}
-.feedback span:hover{transform: scale(1.2);}
-#feedbackMsg{margin-top:10px;font-weight:bold;color: var(--primary);}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Make info section look like normal page content */
-.info-section{
-  max-width: 900px;
-  margin: 30px auto;
-  padding: 0;          /* no extra padding */
-  background: transparent; /* no box background */
-  border: none;        /* remove border */
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background: var(--dark);
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* Make footer also blend with page */
-.footer{
-  background: transparent;
-  border-top: 1px solid #ccc;  /* optional, thin line only */
+/* THREE.JS CANVAS */
+#bg-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
 }
-  /* Improve spacing and readability for info section */
-.info-section h2 {
+
+.page-wrap {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  padding: 40px 20px 20px;
+  position: relative;
+}
+
+.header h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--neon1), var(--neon2), var(--neon3), var(--neon4));
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradShift 4s ease infinite;
+  text-shadow: none;
+  filter: drop-shadow(0 0 30px rgba(255,0,255,0.5));
+  letter-spacing: 4px;
+}
+
+.header .subtitle {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+@keyframes gradShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.topbar-toggle {
+  position: fixed;
+  top: 20px; right: 20px;
+  z-index: 100;
+  cursor: pointer;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  transition: all 0.3s;
+}
+.topbar-toggle:hover { 
+  background: rgba(255,255,255,0.15); 
+  box-shadow: 0 0 20px var(--neon2);
+}
+
+/* MAIN CARD */
+.main-card {
+  max-width: 860px;
+  margin: 20px auto;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 
+    0 0 60px rgba(255,0,255,0.1),
+    0 0 120px rgba(0,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: perspective(1000px) rotateX(0deg);
+  transition: transform 0.1s ease;
+}
+
+/* RESULT AREA */
+.result-header {
+  background: linear-gradient(90deg, var(--neon1), var(--neon2), var(--neon5));
+  background-size: 200% 100%;
+  animation: gradShift 3s ease infinite;
+  padding: 12px 20px;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #000;
+}
+
+.result-box {
+  padding: 30px;
+  min-height: 160px;
+  border-bottom: 1px solid var(--glass-border);
+  position: relative;
+}
+
+.output-idle {
+  text-align: center;
+  color: rgba(255,255,255,0.3);
+  font-family: 'Orbitron', monospace;
+  font-size: 1rem;
+  padding: 30px 0;
+  letter-spacing: 3px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 0.3; }
+  50%      { opacity: 0.7; }
+}
+
+.age-display {
+  display: none;
+  animation: slideIn 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.age-main {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--neon2), var(--neon5));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 0 10px rgba(0,255,255,0.3));
+}
+
+.age-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  color: var(--neon1);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.stat-chip {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 10px 14px;
+  transition: all 0.3s;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-chip::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neon2), transparent);
+  animation: scanLine 3s ease infinite;
+}
+
+.stat-chip:nth-child(2)::before { animation-delay: 0.3s; background: linear-gradient(90deg, transparent, var(--neon1), transparent); }
+.stat-chip:nth-child(3)::before { animation-delay: 0.6s; background: linear-gradient(90deg, transparent, var(--neon3), transparent); }
+.stat-chip:nth-child(4)::before { animation-delay: 0.9s; background: linear-gradient(90deg, transparent, var(--neon4), transparent); }
+.stat-chip:nth-child(5)::before { animation-delay: 1.2s; background: linear-gradient(90deg, transparent, var(--neon5), transparent); }
+
+@keyframes scanLine {
+  0%   { left: -100%; }
+  50%  { left: 100%; }
+  100% { left: 100%; }
+}
+
+.stat-chip:hover {
+  background: rgba(0,255,255,0.08);
+  border-color: var(--neon2);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,255,255,0.15);
+}
+
+.stat-val {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.stat-lbl {
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.birthday-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(255,0,255,0.2), rgba(0,255,255,0.2));
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50px;
+  padding: 8px 18px;
+  margin-top: 16px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: var(--neon3);
+  box-shadow: 0 0 20px rgba(255,255,0,0.1);
+}
+
+/* INPUTS AREA */
+.inputs-area {
+  padding: 30px;
+}
+
+.section-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 6px;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.input-label {
+  min-width: 160px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+select, input[type="number"] {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.3s;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+select option { background: #0a0a1a; color: #fff; }
+
+select:focus, input[type="number"]:focus,
+select:hover, input[type="number"]:hover {
+  border-color: var(--neon2);
+  box-shadow: 0 0 15px rgba(0,255,255,0.2);
+  background: rgba(0,255,255,0.05);
+}
+
+input[type="number"] { width: 100px; }
+
+.cal-icon {
+  cursor: pointer;
+  font-size: 1.4rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 8px 10px;
+  transition: all 0.3s;
+  display: inline-flex;
+}
+.cal-icon:hover {
+  background: rgba(255,0,255,0.15);
+  border-color: var(--neon1);
+  box-shadow: 0 0 15px rgba(255,0,255,0.3);
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* BUTTONS */
+.btn-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-top: 10px;
 }
 
+.btn-calc {
+  background: linear-gradient(135deg, var(--neon1), var(--neon2));
+  border: none;
+  color: #000;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  padding: 14px 28px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-calc::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.btn-calc:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 0 30px rgba(255,0,255,0.6), 0 0 60px rgba(0,255,255,0.3);
+}
+
+.btn-calc:hover::before { opacity: 1; }
+
+.btn-calc:active { transform: scale(0.97); }
+
+.btn-today {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  padding: 14px 22px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+}
+
+.btn-today:hover {
+  background: rgba(0,255,136,0.1);
+  border-color: var(--neon5);
+  box-shadow: 0 0 20px rgba(0,255,136,0.2);
+  color: var(--neon5);
+  transform: translateY(-2px);
+}
+
+/* CALENDAR */
+.cal-wrap {
+  display: none;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.cal {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 16px;
+  flex: 1;
+  min-width: 240px;
+}
+
+.cal h3 { 
+  text-align: center; 
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: var(--neon2);
+  margin-bottom: 10px;
+}
+
+.cal table { border-collapse: collapse; width: 100%; }
+
+.cal th {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  padding: 6px 4px;
+  text-align: center;
+}
+
+.cal td {
+  text-align: center;
+  padding: 5px 3px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  color: rgba(255,255,255,0.7);
+}
+
+.cal td:hover { 
+  background: rgba(0,255,255,0.15);
+  color: var(--neon2);
+}
+
+.cal .selected {
+  background: linear-gradient(135deg, var(--neon1), var(--neon2));
+  color: #000;
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(0,255,255,0.4);
+}
+
+.cal-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.cal-nav button {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+}
+
+.cal-nav button:hover {
+  background: rgba(255,0,255,0.2);
+  border-color: var(--neon1);
+}
+
+.cal-nav strong {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 1px;
+}
+
+/* INFO SECTION */
+.info-section {
+  max-width: 860px;
+  margin: 30px auto;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 36px;
+  box-shadow: 0 0 60px rgba(0,255,136,0.05);
+}
+
+.info-section h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: 1rem;
+  letter-spacing: 4px;
+  color: var(--neon5);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
 .info-section p {
-  line-height: 1.6;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 14px;
+  font-size: 0.95rem;
+}
+
+/* FOOTER */
+.footer {
+  max-width: 860px;
+  margin: 20px auto 40px;
+  text-align: center;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 30px;
+}
+
+.footer p {
+  color: rgba(255,255,255,0.5);
+  margin: 6px 0;
+  font-size: 0.9rem;
+}
+
+.footer a {
+  color: var(--neon2);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-shadow: 0 0 10px var(--neon2);
+}
+
+.feedback {
+  margin: 16px 0;
+}
+
+.feedback span {
+  font-size: 2rem;
+  margin: 0 8px;
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.2s;
+  filter: grayscale(50%);
+}
+
+.feedback span:hover {
+  transform: scale(1.4) rotate(10deg);
+  filter: grayscale(0%) drop-shadow(0 0 8px rgba(255,255,255,0.5));
+}
+
+#feedbackMsg {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: var(--neon5);
+  margin-top: 10px;
+}
+
+/* FLOATING PARTICLES (CSS) */
+.particle {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: floatPart linear infinite;
+  opacity: 0.15;
+}
+
+@keyframes floatPart {
+  from { transform: translateY(110vh) rotate(0deg); }
+  to   { transform: translateY(-10vh) rotate(720deg); }
+}
+
+/* SCROLL REVEAL */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.34,1.2,0.64,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* LIGHT MODE */
+body.light {
+  --dark: #f0f4ff;
+  --glass: rgba(255,255,255,0.7);
+  --glass-border: rgba(0,0,0,0.1);
+}
+
+body.light .stat-val { color: #111; }
+body.light select, body.light input[type="number"] {
+  color: #111;
+  background: rgba(0,0,0,0.06);
+}
+body.light .cal td { color: #333; }
+body.light .info-section p { color: rgba(0,0,0,0.7); }
+body.light .footer p { color: rgba(0,0,0,0.6); }
+body.light .input-label { color: rgba(0,0,0,0.6); }
+body.light .section-title { color: rgba(0,0,0,0.3); }
+body.light .btn-today { color: #111; }
+
+@media (max-width: 600px) {
+  .input-label { min-width: 100%; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .age-main { font-size: 1.4rem; }
 }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="topbar">
-    <h1>Age Calculator</h1>
-    <div class="toggle" onclick="toggleMode()">🌙 / 🌞</div>
+<canvas id="bg-canvas"></canvas>
+
+<div class="topbar-toggle" onclick="toggleMode()">🌙 / 🌞</div>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="header reveal">
+    <h1>AGE CALCULATOR</h1>
+    <div class="subtitle">by Umesh Kushwaha · 2026</div>
   </div>
 
-  <div class="result-header">Result</div>
-  <div class="result-box">
-    <div class="output" id="output">
-      <p class="big">Modify the values and click Calculate</p>
+  <!-- MAIN CARD -->
+  <div class="main-card reveal" id="mainCard">
+
+    <!-- RESULT -->
+    <div class="result-header">◈ RESULT OUTPUT</div>
+    <div class="result-box">
+      <div class="output-idle" id="idleMsg">[ ENTER YOUR DATE OF BIRTH AND CALCULATE ]</div>
+      <div class="age-display" id="ageDisplay">
+        <div class="age-label">YOUR AGE IS</div>
+        <div class="age-main" id="ageBig"></div>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="birthday-badge" id="bDayBadge"></div>
+      </div>
+    </div>
+
+    <!-- INPUTS -->
+    <div class="inputs-area">
+      <div class="section-title">◈ Input Parameters</div>
+
+      <div class="input-row">
+        <div class="input-label">Date of Birth</div>
+        <select id="bMonth"></select>
+        <select id="bDay"></select>
+        <input type="number" id="bYear" placeholder="Year">
+        <span class="cal-icon" onclick="showCal('birth')" title="Open Calendar">📅</span>
+      </div>
+
+      <div class="input-row">
+        <div class="input-label">Age At the Date of</div>
+        <select id="tMonth"></select>
+        <select id="tDay"></select>
+        <input type="number" id="tYear" placeholder="Year">
+        <span class="cal-icon" onclick="showCal('target')" title="Open Calendar">📅</span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-calc" onclick="calculateAge()">▶ CALCULATE</button>
+        <button class="btn-today" onclick="setToday()">⬤ TILL TODAY</button>
+      </div>
+
+      <div class="cal-wrap" id="calWrap">
+        <div class="cal" id="calBirth"></div>
+        <div class="cal" id="calTarget"></div>
+      </div>
     </div>
   </div>
 
-  <div class="inputs-box">
-    <div class="row">
-      <label>Date of Birth</label>
-      <select id="bMonth"></select>
-      <select id="bDay"></select>
-      <input type="number" id="bYear" placeholder="Year" style="width:90px;">
-      <span class="calendar-btn" onclick="showCal('birth')">📅</span>
-    </div>
-
-    <div class="row">
-      <label>Age at the Date of</label>
-      <select id="tMonth"></select>
-      <select id="tDay"></select>
-      <input type="number" id="tYear" placeholder="Year" style="width:90px;">
-      <span class="calendar-btn" onclick="showCal('target')">📅</span>
-    </div>
-
-    <div class="row">
-      <button onclick="calculateAge()">Calculate ▶️</button>
-      <button onclick="setToday()">Till Today</button>
-    </div>
-
-    <div class="cal-wrap">
-      <div class="cal" id="calBirth"></div>
-      <div class="cal" id="calTarget"></div>
-    </div>
+  <!-- INFO -->
+  <div class="info-section reveal">
+    <h2>◈ How Age Is Calculated</h2>
+    <p>Different cultures calculate age in different ways. This age calculator follows the most commonly used system. In this system, a person's age increases on their birthday. For example, if someone has lived for 3 years and 11 months, their age is counted as 3, and it becomes 4 on their next birthday.</p>
+    <p>In some cultures, age can be counted in other ways. In certain traditional systems, a person may be considered one year old at birth, and their age increases at the beginning of the new year instead of on their birthday.</p>
+    <p>Sometimes, the result in months and days can be confusing, especially when dates are near the end of a month. This calculator uses a simple and consistent method to calculate the difference between two dates.</p>
+    <p>This online age calculator helps you calculate your exact age in years, months, days, hours, minutes and seconds. You can use this birthday age calculator to quickly find your age between two dates.</p>
   </div>
+
+  <!-- FOOTER -->
+  <div class="footer reveal">
+    <p>🙏 Thank you for visiting</p>
+    <p><b>By Umesh Kushwaha</b></p>
+    <p>📧 <a href="mailto:umeshkumark163@gmail.com">umeshkumark163@gmail.com</a></p>
+    <div class="feedback">
+      <span onclick="giveFeedback('love')" title="Love it">❤️</span>
+      <span onclick="giveFeedback('like')" title="Like">👍</span>
+      <span onclick="giveFeedback('dislike')" title="Dislike">👎</span>
+      <span onclick="giveFeedback('star')" title="Awesome">⭐</span>
+    </div>
+    <p id="feedbackMsg"></p>
+  </div>
+
 </div>
 
 <script>
-const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+/* ──────────────────────────────────────────
+   THREE.JS 3D BACKGROUND
+────────────────────────────────────────── */
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
 
-function fillSelectors(){
-  months.forEach((m,i)=>{
-    bMonth.add(new Option(m,i));
-    tMonth.add(new Option(m,i));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.set(0, 0, 30);
+
+  // Lights
+  const ambLight = new THREE.AmbientLight(0xffffff, 0.2);
+  scene.add(ambLight);
+
+  const colors = [0xff00ff, 0x00ffff, 0xffff00, 0xff6600, 0x00ff88, 0x8800ff, 0x0088ff];
+
+  function makeLight(color, x, y, z) {
+    const l = new THREE.PointLight(color, 3, 60);
+    l.position.set(x, y, z);
+    scene.add(l);
+    return l;
+  }
+
+  const lights = [
+    makeLight(0xff00ff, -20, 10, 10),
+    makeLight(0x00ffff,  20, -10, 10),
+    makeLight(0xffff00,   0, 20, -10),
+    makeLight(0x00ff88, -15, -15, 5),
+  ];
+
+  // 3D Objects group
+  const objects = [];
+  const group = new THREE.Group();
+  scene.add(group);
+
+  function randRange(a, b) { return a + Math.random() * (b - a); }
+  function randColor() { return colors[Math.floor(Math.random() * colors.length)]; }
+
+  const geomFactories = [
+    () => new THREE.IcosahedronGeometry(randRange(0.6, 1.6), 0),
+    () => new THREE.OctahedronGeometry(randRange(0.7, 1.5), 0),
+    () => new THREE.TetrahedronGeometry(randRange(0.8, 1.8), 0),
+    () => new THREE.TorusGeometry(randRange(0.6, 1.2), 0.25, 8, 16),
+    () => new THREE.BoxGeometry(randRange(0.8, 1.6), randRange(0.8, 1.6), randRange(0.8, 1.6)),
+    () => new THREE.ConeGeometry(randRange(0.5, 1), randRange(1, 2), 6),
+    () => new THREE.DodecahedronGeometry(randRange(0.7, 1.4), 0),
+    () => new THREE.TorusKnotGeometry(0.6, 0.2, 60, 10),
+  ];
+
+  for (let i = 0; i < 55; i++) {
+    const geom = geomFactories[Math.floor(Math.random() * geomFactories.length)]();
+    const c = randColor();
+    const isWire = Math.random() > 0.5;
+    const mat = isWire
+      ? new THREE.MeshBasicMaterial({ color: c, wireframe: true, opacity: 0.5, transparent: true })
+      : new THREE.MeshPhongMaterial({ color: c, shininess: 100, specular: 0xffffff, opacity: 0.7, transparent: true, emissive: c, emissiveIntensity: 0.15 });
+
+    const mesh = new THREE.Mesh(geom, mat);
+    mesh.position.set(randRange(-40, 40), randRange(-30, 30), randRange(-50, 0));
+    mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+
+    const speed = {
+      rx: randRange(-0.008, 0.008),
+      ry: randRange(-0.012, 0.012),
+      rz: randRange(-0.006, 0.006),
+      fx: randRange(-0.04, 0.04),
+      fy: randRange(-0.03, 0.03),
+      amp: randRange(0.5, 2),
+      phase: Math.random() * Math.PI * 2,
+    };
+
+    objects.push({ mesh, speed, ox: mesh.position.x, oy: mesh.position.y });
+    group.add(mesh);
+  }
+
+  // Particle field (dots)
+  const partGeo = new THREE.BufferGeometry();
+  const partCount = 300;
+  const partPos = new Float32Array(partCount * 3);
+  for (let i = 0; i < partCount; i++) {
+    partPos[i * 3]     = randRange(-60, 60);
+    partPos[i * 3 + 1] = randRange(-40, 40);
+    partPos[i * 3 + 2] = randRange(-60, -5);
+  }
+  partGeo.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
+  const partMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.12, transparent: true, opacity: 0.35 });
+  const particles = new THREE.Points(partGeo, partMat);
+  scene.add(particles);
+
+  // Scroll & mouse state
+  let scrollY = 0;
+  let mouseX = 0, mouseY = 0;
+  let targetX = 0, targetY = 0;
+
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+  window.addEventListener('mousemove', e => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
   });
-  for(let d=1;d<=31;d++){
-    bDay.add(new Option(d,d));
-    tDay.add(new Option(d,d));
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.01;
+
+    // Smooth mouse
+    targetX += (mouseX - targetX) * 0.04;
+    targetY += (mouseY - targetY) * 0.04;
+
+    // Scroll tilt on main group
+    group.rotation.x = scrollY * 0.0008 + targetY * 0.15;
+    group.rotation.y = scrollY * 0.0005 + targetX * 0.2;
+    group.rotation.z = scrollY * 0.0003;
+
+    // Camera drift
+    camera.position.x = targetX * 3;
+    camera.position.y = -targetY * 2;
+
+    // Animate lights
+    lights[0].position.x = Math.sin(t * 0.5) * 25;
+    lights[0].position.y = Math.cos(t * 0.3) * 20;
+    lights[1].position.x = Math.cos(t * 0.4) * 25;
+    lights[1].position.y = Math.sin(t * 0.6) * 20;
+    lights[2].position.x = Math.sin(t * 0.7) * 15;
+    lights[2].position.z = Math.cos(t * 0.5) * 20;
+    lights[3].position.y = Math.sin(t * 0.35) * 20;
+
+    // Individual object animations
+    objects.forEach((obj, i) => {
+      obj.mesh.rotation.x += obj.speed.rx;
+      obj.mesh.rotation.y += obj.speed.ry;
+      obj.mesh.rotation.z += obj.speed.rz;
+
+      // Floating motion
+      obj.mesh.position.x = obj.ox + Math.sin(t * obj.speed.fx * 10 + obj.speed.phase) * obj.speed.amp;
+      obj.mesh.position.y = obj.oy + Math.cos(t * obj.speed.fy * 10 + obj.speed.phase) * obj.speed.amp;
+
+      // Scroll: objects move upward
+      obj.mesh.position.y -= scrollY * 0.01;
+
+      // Pulse scale on some
+      if (i % 5 === 0) {
+        const s = 1 + Math.sin(t * 1.5 + i) * 0.12;
+        obj.mesh.scale.setScalar(s);
+      }
+    });
+
+    // Particles rotate
+    particles.rotation.y = t * 0.03 + scrollY * 0.0004;
+    particles.rotation.x = t * 0.015;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+
+/* ──────────────────────────────────────────
+   SCROLL REVEAL
+────────────────────────────────────────── */
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+revealEls.forEach(el => revealObs.observe(el));
+
+/* Card 3D tilt on scroll */
+const mainCard = document.getElementById('mainCard');
+window.addEventListener('scroll', () => {
+  const s = window.scrollY;
+  const tilt = Math.min(s * 0.01, 8);
+  mainCard.style.transform = `perspective(1000px) rotateX(${tilt * 0.3}deg) rotateY(${Math.sin(s * 0.01) * 2}deg)`;
+});
+
+/* ──────────────────────────────────────────
+   AGE CALCULATOR LOGIC
+────────────────────────────────────────── */
+const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function fillSelectors() {
+  months.forEach((m, i) => {
+    bMonth.add(new Option(m, i));
+    tMonth.add(new Option(m, i));
+  });
+  for (let d = 1; d <= 31; d++) {
+    bDay.add(new Option(d, d));
+    tDay.add(new Option(d, d));
   }
 }
 fillSelectors();
 
-// load saved
-window.onload=()=>{
-  const sd=localStorage.getItem("dob");
-  const st=localStorage.getItem("target");
-  if(sd){
-    const d=new Date(sd);
-    bMonth.value=d.getMonth(); bDay.value=d.getDate(); bYear.value=d.getFullYear();
+window.onload = () => {
+  const sd = localStorage.getItem("dob");
+  const st = localStorage.getItem("target");
+  if (sd) {
+    const d = new Date(sd);
+    bMonth.value = d.getMonth(); bDay.value = d.getDate(); bYear.value = d.getFullYear();
   }
-  if(st){
-    const d=new Date(st);
-    tMonth.value=d.getMonth(); tDay.value=d.getDate(); tYear.value=d.getFullYear();
+  if (st) {
+    const d = new Date(st);
+    tMonth.value = d.getMonth(); tDay.value = d.getDate(); tYear.value = d.getFullYear();
   }
-  const mode=localStorage.getItem("mode");
-  if(mode==="dark") document.body.classList.add("dark");
+  const mode = localStorage.getItem("mode");
+  if (mode === "light") document.body.classList.add("light");
+
+  // Staggered reveal for header
+  setTimeout(() => document.querySelector('.header').classList.add('visible'), 100);
+  setTimeout(() => document.getElementById('mainCard').classList.add('visible'), 250);
 };
 
-function toggleMode(){
-  document.body.classList.toggle("dark");
-  localStorage.setItem("mode", document.body.classList.contains("dark")?"dark":"light");
+function toggleMode() {
+  document.body.classList.toggle("light");
+  localStorage.setItem("mode", document.body.classList.contains("light") ? "light" : "dark");
 }
 
-function setToday(){
-  const d=new Date();
-  tMonth.value=d.getMonth();
-  tDay.value=d.getDate();
-  tYear.value=d.getFullYear();
+function setToday() {
+  const d = new Date();
+  tMonth.value = d.getMonth();
+  tDay.value   = d.getDate();
+  tYear.value  = d.getFullYear();
 }
 
-function daysInMonth(y,m){
-  return new Date(y,m+1,0).getDate();
+function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
+
+function calculateAge() {
+  const by = +bYear.value, bm = +bMonth.value, bd = +bDay.value;
+  const ty = +tYear.value, tm = +tMonth.value, td = +tDay.value;
+
+  if (!by || !ty) { alert("Please enter years properly."); return; }
+
+  const dob    = new Date(by, bm, bd);
+  const target = new Date(ty, tm, td);
+  if (target < dob) { alert("Target date must be after birth date."); return; }
+
+  localStorage.setItem("dob",    dob.toISOString());
+  localStorage.setItem("target", target.toISOString());
+
+  let years = ty - by, mons = tm - bm, days = td - bd;
+  if (days   < 0) { mons--; days += daysInMonth(ty, tm - 1 < 0 ? 11 : tm - 1); }
+  if (mons   < 0) { years--; mons += 12; }
+
+  const msPerDay     = 86400000;
+  const totalDays    = Math.floor((target - dob) / msPerDay);
+  const totalWeeks   = Math.floor(totalDays / 7);
+  const extraDays    = totalDays % 7;
+  const totalMonths  = years * 12 + mons;
+  const totalHours   = totalDays * 24;
+  const totalMins    = totalHours * 60;
+  const totalSecs    = totalMins * 60;
+
+  let nextB = new Date(ty, bm, bd);
+  if (nextB <= target) nextB.setFullYear(nextB.getFullYear() + 1);
+  const daysToB = Math.ceil((nextB - target) / msPerDay);
+
+  // Update UI
+  document.getElementById('idleMsg').style.display = 'none';
+  const ad = document.getElementById('ageDisplay');
+  ad.style.display = 'block';
+  ad.style.animation = 'none';
+  void ad.offsetWidth;
+  ad.style.animation = 'slideIn 0.6s cubic-bezier(0.34,1.56,0.64,1)';
+
+  document.getElementById('ageBig').textContent =
+    `${years} Years  ${mons} Months  ${days} Days`;
+
+  const stats = [
+    { val: totalMonths.toLocaleString() + ` mo ${days} d`, lbl: 'In Months' },
+    { val: totalWeeks.toLocaleString()  + ` wk ${extraDays} d`, lbl: 'In Weeks' },
+    { val: totalDays.toLocaleString(),   lbl: 'Total Days' },
+    { val: totalHours.toLocaleString(),  lbl: 'Total Hours' },
+    { val: totalMins.toLocaleString(),   lbl: 'Minutes' },
+    { val: totalSecs.toLocaleString(),   lbl: 'Seconds' },
+  ];
+
+  const grid = document.getElementById('statsGrid');
+  grid.innerHTML = stats.map(s => `
+    <div class="stat-chip">
+      <div class="stat-val">${s.val}</div>
+      <div class="stat-lbl">${s.lbl}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('bDayBadge').innerHTML = `🎂 Next Birthday in <strong style="color:#fff;margin:0 6px;">${daysToB}</strong> Days`;
+
+  // Show calendars
+  document.getElementById('calWrap').style.display = 'flex';
+  drawCalendar(+bYear.value, +bMonth.value, +bDay.value, "calBirth",  "birth");
+  drawCalendar(+tYear.value, +tMonth.value, +tDay.value, "calTarget", "target");
 }
 
-/* Draw calendar with clickable days */
-function drawCalendar(y,m,selDay,boxId,mode){
-  const box=document.getElementById(boxId);
-  if(!y || isNaN(y)) { box.innerHTML=""; return; }
+/* ──── CALENDAR ──── */
+function drawCalendar(y, m, selDay, boxId, mode) {
+  const box = document.getElementById(boxId);
+  if (!y || isNaN(y)) { box.innerHTML = ''; return; }
 
-  const first=new Date(y,m,1).getDay();
-  const dim=new Date(y,m+1,0).getDate();
+  const first = new Date(y, m, 1).getDay();
+  const dim   = new Date(y, m + 1, 0).getDate();
+  const wds   = ['S','M','T','W','T','F','S'];
 
-  let html=`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+  let html = `
+    <div class="cal-nav">
       <button onclick="changeMonth('${mode}',-1)">◀</button>
       <strong>${months[m]} ${y}</strong>
       <button onclick="changeMonth('${mode}',1)">▶</button>
     </div>
-    <table><tr>
+    <table><tr>${wds.map(w => `<th>${w}</th>`).join('')}</tr><tr>
   `;
-  const wd=["S","M","T","W","T","F","S"];
-  wd.forEach(w=>html+=`<th>${w}</th>`);
-  html+="</tr><tr>";
 
-  let cell=0;
-  for(let i=0;i<first;i++){html+="<td></td>"; cell++;}
-
-  for(let d=1;d<=dim;d++){
-    const cls = d==selDay ? "selected" : "";
-    html+=`<td class="${cls}" onclick="pickFromCalendar(${d},${m},${y},'${mode}')">${d}</td>`;
+  let cell = 0;
+  for (let i = 0; i < first; i++) { html += '<td></td>'; cell++; }
+  for (let d = 1; d <= dim; d++) {
+    const cls = d === selDay ? 'selected' : '';
+    html += `<td class="${cls}" onclick="pickFromCalendar(${d},${m},${y},'${mode}')">${d}</td>`;
     cell++;
-    if(cell%7==0) html+="</tr><tr>";
+    if (cell % 7 === 0) html += '</tr><tr>';
   }
-  html+="</tr></table>";
-  box.innerHTML=html;
+  html += '</tr></table>';
+  box.innerHTML = html;
 }
 
-/* Toggle calendar */
-function showCal(type){
-  const wrap = document.querySelector(".cal-wrap");
-  wrap.style.display = "flex"; // hamesha show
-
-  if(type==="birth"){
+function showCal(type) {
+  document.getElementById('calWrap').style.display = 'flex';
+  if (type === 'birth') {
     drawCalendar(+bYear.value, +bMonth.value, +bDay.value, "calBirth", "birth");
   } else {
     drawCalendar(+tYear.value, +tMonth.value, +tDay.value, "calTarget", "target");
   }
 }
 
-/* Pick date from calendar */
-function pickFromCalendar(d,m,y,mode){
-  if(mode === "birth"){
-    bDay.value = d;
-    bMonth.value = m;
-    bYear.value = y;
-    drawCalendar(y,m,d,"calBirth","birth");
+function pickFromCalendar(d, m, y, mode) {
+  if (mode === 'birth') {
+    bDay.value = d; bMonth.value = m; bYear.value = y;
+    drawCalendar(y, m, d, "calBirth", "birth");
   } else {
-    tDay.value = d;
-    tMonth.value = m;
-    tYear.value = y;
-    drawCalendar(y,m,d,"calTarget","target");
+    tDay.value = d; tMonth.value = m; tYear.value = y;
+    drawCalendar(y, m, d, "calTarget", "target");
   }
-  // ❌ Yahan calendar hide nahi hoga
-  // Result bhi auto-update nahi hoga
 }
 
-function calculateAge(){
-  const by=+bYear.value, bm=+bMonth.value, bd=+bDay.value;
-  const ty=+tYear.value, tm=+tMonth.value, td=+tDay.value;
-  if(!by||!ty){ alert("Enter years properly"); return; }
-
-  const dob=new Date(by,bm,bd);
-  const target=new Date(ty,tm,td);
-  if(target<dob){ alert("Target date must be after birth date"); return; }
-
-  localStorage.setItem("dob", dob.toISOString());
-  localStorage.setItem("target", target.toISOString());
-
-  let years=ty-by, months=tm-bm, days=td-bd;
-  if(days<0){ months--; days+=daysInMonth(ty,tm-1<0?11:tm-1); }
-  if(months<0){ years--; months+=12; }
-
-  const msPerDay=86400000;
-  const totalDays=Math.floor((target-dob)/msPerDay);
-  const totalWeeks=Math.floor(totalDays/7);
-  const extraDays=totalDays%7;
-  const totalMonths=years*12+months;
-  const totalHours=totalDays*24;
-  const totalMinutes=totalHours*60;
-  const totalSeconds=totalMinutes*60;
-
-  let nextB=new Date(ty,bm,bd);
-  if(nextB<=target) nextB.setFullYear(nextB.getFullYear()+1);
-  const daysToB=Math.ceil((nextB-target)/msPerDay);
-
-  output.innerHTML=`
-    <p class="big">Age:</p>
-    <p class="big">${years} years ${months} months ${days} days</p>
-    <p>or ${totalMonths} months ${days} days</p>
-    <p>or ${totalWeeks} weeks ${extraDays} days</p>
-    <p>or ${totalDays.toLocaleString()} days</p>
-    <p>or ${totalHours.toLocaleString()} hours</p>
-    <p>or ${totalMinutes.toLocaleString()} minutes</p>
-    <p>or ${totalSeconds.toLocaleString()} seconds</p>
-    <p><b>Next birthday in: ${daysToB} days 🎂</b></p>
-  `;
-    // ✅ Calculate ke baad calendars auto show
-  const wrap = document.querySelector(".cal-wrap");
-  wrap.style.display = "flex";
-  drawCalendar(+bYear.value, +bMonth.value, +bDay.value, "calBirth", "birth");
-  drawCalendar(+tYear.value, +tMonth.value, +tDay.value, "calTarget", "target");
-}
-
-function giveFeedback(type){
-  let msg = "";
-  if(type === "love") msg = "❤️ Thanks! You loved it!";
-  if(type === "like") msg = "👍 Thanks for your like!";
-  if(type === "dislike") msg = "👎 Thanks for your feedback!";
-  if(type === "star") msg = "⭐ Glad you found it awesome!";
-  document.getElementById("feedbackMsg").innerText = msg;
-}
-function changeMonth(mode,delta){
-  if(mode==="birth"){
-    let m=+bMonth.value + delta;
-    let y=+bYear.value;
-    if(m<0){ m=11; y--; }
-    if(m>11){ m=0; y++; }
-    bMonth.value=m; bYear.value=y;
-    drawCalendar(y,m,+bDay.value,"calBirth","birth");
+function changeMonth(mode, delta) {
+  if (mode === 'birth') {
+    let m = +bMonth.value + delta, y = +bYear.value;
+    if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; }
+    bMonth.value = m; bYear.value = y;
+    drawCalendar(y, m, +bDay.value, "calBirth", "birth");
   } else {
-    let m=+tMonth.value + delta;
-    let y=+tYear.value;
-    if(m<0){ m=11; y--; }
-    if(m>11){ m=0; y++; }
-    tMonth.value=m; tYear.value=y;
-    drawCalendar(y,m,+tDay.value,"calTarget","target");
+    let m = +tMonth.value + delta, y = +tYear.value;
+    if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; }
+    tMonth.value = m; tYear.value = y;
+    drawCalendar(y, m, +tDay.value, "calTarget", "target");
   }
+}
+
+function giveFeedback(type) {
+  const map = {
+    love: '❤️ Thanks! You loved it!',
+    like: '👍 Thanks for your like!',
+    dislike: '👎 Thanks for your feedback!',
+    star: '⭐ Glad you found it awesome!'
+  };
+  document.getElementById("feedbackMsg").textContent = map[type] || '';
 }
 </script>
-<div class="info-section">
-  <h2>How Age Is Calculated</h2>
-  <p>
-    Different cultures calculate age in different ways. This age calculator follows the most commonly used system.
-    In this system, a person’s age increases on their birthday. For example, if someone has lived for 3 years and
-    11 months, their age is counted as 3, and it becomes 4 on their next birthday.
-  </p>
-
-  <p>
-    In some cultures, age can be counted in other ways. In certain traditional systems, a person may be considered
-    one year old at birth, and their age increases at the beginning of the new year instead of on their birthday.
-    Because of these differences, age can be expressed differently depending on culture and tradition.
-  </p>
-
-  <p>
-    Sometimes, the result in months and days can be confusing, especially when dates are near the end of a month.
-    This happens because different months have different numbers of days. This calculator uses a simple and consistent
-    method to calculate the difference between two dates, so the result stays easy to understand and useful for
-    everyday calculations.
-  </p>
-  <p>
-    This online age calculator helps you calculate your exact age in years, months, days, hours, minutes and seconds. 
-    You can use this birthday age calculator to quickly find your age between two dates.
-</p>
-</div>
-
-<!-- Footer -->
-<div class="footer">
-  <p>🙏 Thankyou for visiting</p>
-  <p><b>By Umesh Kushwaha</b></p>
-  <p>📧 Contact me: <a href="mailto:umeshkumark163@gmail.com">umeshkumark163@gmail.com</a></p>
-
-  <div class="feedback">
-    <span onclick="giveFeedback('love')" title="Love it">❤️</span>
-    <span onclick="giveFeedback('like')" title="Like">👍</span>
-    <span onclick="giveFeedback('dislike')" title="Dislike">👎</span>
-    <span onclick="giveFeedback('star')" title="Awesome">⭐</span>
-  </div>
-
-  <p id="feedbackMsg"></p>
-</div>
-
 </body>
 </html>
